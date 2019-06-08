@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const jwt  = require('jsonwebtoken'); 
 
 module.exports = {
     register(req, res) {
@@ -19,10 +20,16 @@ module.exports = {
 
             user.comparePassword((err, isMatch) => {
                 if (err) throw err
+                
+                var token = jwt.sign({
+                    data: user
+                }, process.env.SECRET, {
+                    expiresIn: '5h'
+                })
 
                 isMatch ? res.json({
                     message: 'sucess',
-                    data   : user
+                    data   : token
                 }) : res.json({
                     message: 'failed',
                     data: err
